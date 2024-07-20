@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch</title>
+    <style>
+        /* CSS Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .stopwatch {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin: 0;
+        }
+
+        .controls {
+            margin: 20px 0;
+        }
+
+        button {
+            font-size: 1rem;
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .laps {
+            margin-top: 20px;
+        }
+
+        .laps h2 {
+            margin: 0;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            padding: 5px 0;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="stopwatch">
+        <h1 id="timer">00:00:00</h1>
+        <div class="controls">
+            <button id="start">Start</button>
+            <button id="pause">Pause</button>
+            <button id="reset">Reset</button>
+            <button id="lap">Lap</button>
+        </div>
+        <div class="laps">
+            <h2>Lap Times</h2>
+            <ul id="lapList"></ul>
+        </div>
+    </div>
+    <script>
+        // JavaScript Code
+        let timer;
+        let isRunning = false;
+        let elapsedTime = 0;
+        let lapCount = 0;
+
+        const timerElement = document.getElementById('timer');
+        const lapList = document.getElementById('lapList');
+        const startButton = document.getElementById('start');
+        const pauseButton = document.getElementById('pause');
+        const resetButton = document.getElementById('reset');
+        const lapButton = document.getElementById('lap');
+
+        function formatTime(ms) {
+            const hours = Math.floor(ms / (1000 * 60 * 60));
+            const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+
+            return [
+                hours.toString().padStart(2, '0'),
+                minutes.toString().padStart(2, '0'),
+                seconds.toString().padStart(2, '0')
+            ].join(':');
+        }
+
+        function updateTimer() {
+            if (isRunning) {
+                elapsedTime += 100; // increment by 100ms
+                timerElement.textContent = formatTime(elapsedTime);
+            }
+        }
+
+        startButton.addEventListener('click', () => {
+            if (!isRunning) {
+                isRunning = true;
+                timer = setInterval(updateTimer, 100);
+            }
+        });
+
+        pauseButton.addEventListener('click', () => {
+            if (isRunning) {
+                isRunning = false;
+                clearInterval(timer);
+            }
+        });
+
+        resetButton.addEventListener('click', () => {
+            isRunning = false;
+            clearInterval(timer);
+            elapsedTime = 0;
+            timerElement.textContent = formatTime(elapsedTime);
+            lapList.innerHTML = ''; // Clear lap times
+            lapCount = 0;
+        });
+
+        lapButton.addEventListener('click', () => {
+            if (isRunning) {
+                lapCount++;
+                const lapTime = document.createElement('li');
+                lapTime.textContent = `Lap ${lapCount}: ${formatTime(elapsedTime)}`;
+                lapList.appendChild(lapTime);
+            }
+        });
+    </script>
+</body>
+</html>
